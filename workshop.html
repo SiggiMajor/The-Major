@@ -15,6 +15,9 @@
     .journal { display:grid; grid-template-columns:repeat(2,1fr); gap:18px; } article { min-height:390px; padding:28px; display:flex; flex-direction:column; justify-content:end; color:white; text-shadow:0 1px 12px #111; background:linear-gradient(0deg,rgba(10,12,11,.86),transparent 66%),var(--image) center/cover; } article time { color:#f0c0b0; font-size:10px; letter-spacing:.12em; } article h2 { font:400 clamp(23px,3vw,34px)/1.15 'Libre Baskerville',serif; margin:12px 0; } article p { font-size:11px; line-height:1.7; max-width:430px; margin:0 0 18px; } article a { width:max-content; font-size:10px; letter-spacing:.1em; border-bottom:1px solid currentColor; padding-bottom:4px; } .feature { grid-column:span 2; min-height:490px; }
     footer { padding:30px 5vw; border-top:1px solid var(--line); color:var(--muted); font-size:10px; display:flex; justify-content:space-between; } @media(max-width:720px) { nav { gap:12px; } main { padding:70px 6vw; } .journal { grid-template-columns:1fr; } .feature { grid-column:auto; min-height:390px; } footer { display:block; line-height:2; } }
   </style>
+<style>
+.journal .feature { background-image: linear-gradient(0deg, rgba(10,12,11,.86), transparent 66%), url('assets/workshop-hands-original.jpg'); }
+</style>
 </head>
 <body>
   <header><a class="logo" href="index.html">MAJOR WATCH'UP <span>CO.</span></a><nav><a href="shop.html">SHOP</a><a href="about.html">ABOUT US</a><a href="contact.html">CONTACT</a></nav></header>
