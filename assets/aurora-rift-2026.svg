@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" role="img" aria-labelledby="title desc">
+  <title id="title">Aurora Rift 2026 mechanical watch</title>
+  <desc id="desc">A dark steel mechanical watch with a green aurora dial and red seconds hand.</desc>
+  <defs>
+    <linearGradient id="strap" x1="0" x2="1"><stop stop-color="#101514"/><stop offset=".5" stop-color="#35413b"/><stop offset="1" stop-color="#0d1110"/></linearGradient>
+    <radialGradient id="dial"><stop stop-color="#8ac6a0"/><stop offset=".42" stop-color="#2c6b58"/><stop offset="1" stop-color="#091b1a"/></radialGradient>
+    <linearGradient id="case" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e4e3d9"/><stop offset=".38" stop-color="#737b73"/><stop offset=".72" stop-color="#222b28"/><stop offset="1" stop-color="#bfc4b8"/></linearGradient>
+    <filter id="shadow"><feGaussianBlur stdDeviation="24"/></filter>
+  </defs>
+  <ellipse cx="450" cy="1080" rx="250" ry="36" fill="#000" opacity=".28" filter="url(#shadow)"/>
+  <rect x="325" y="34" width="250" height="380" rx="110" fill="url(#strap)"/>
+  <rect x="325" y="786" width="250" height="380" rx="110" fill="url(#strap)"/>
+  <circle cx="450" cy="600" r="292" fill="#111817" stroke="#050807" stroke-width="18"/>
+  <circle cx="450" cy="600" r="270" fill="url(#case)" stroke="#aeb8ac" stroke-width="9"/>
+  <circle cx="450" cy="600" r="231" fill="url(#dial)" stroke="#182824" stroke-width="12"/>
+  <g fill="#edf1df" font-family="Georgia,serif" font-size="31" text-anchor="middle"><text x="450" y="425">12</text><text x="580" y="615">3</text><text x="450" y="795">6</text><text x="320" y="615">9</text></g>
+  <g stroke="#d9e5d7" stroke-width="7" stroke-linecap="round"><path d="M450 400v30M650 600h-30M450 800v-30M250 600h30"/></g>
+  <path d="M450 600L382 497" stroke="#f3f1dc" stroke-width="13" stroke-linecap="round"/>
+  <path d="M450 600L540 640" stroke="#f3f1dc" stroke-width="11" stroke-linecap="round"/>
+  <path d="M450 600L630 510" stroke="#ce4b39" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="450" cy="600" r="17" fill="#d6e1c9" stroke="#12211d" stroke-width="7"/>
+  <text x="450" y="540" fill="#e7f0df" font-family="monospace" font-size="17" text-anchor="middle" letter-spacing="4">MAJOR WATCH'UP</text>
+  <text x="450" y="680" fill="#b7dfbf" font-family="monospace" font-size="14" text-anchor="middle" letter-spacing="3">AURORA RIFT</text>
+  <circle cx="735" cy="610" r="27" fill="#7e877d" stroke="#252d29" stroke-width="9"/>
+</svg>

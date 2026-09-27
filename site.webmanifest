@@ -1,0 +1,17 @@
+{
+  "name": "Major Watch'up Reykjavik",
+  "short_name": "Major Watch'up",
+  "description": "Hand assembled mechanical watches from Reykjavik.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#171918",
+  "theme_color": "#b63c2d",
+  "icons": [
+    {
+      "src": "assets/major-watchup-mark.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
