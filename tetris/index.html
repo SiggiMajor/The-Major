@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="is"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tetris</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0d1321;color:#edf3ff;font:16px system-ui;min-height:100vh;display:grid;place-items:center}main{padding:20px;max-width:760px;width:100%}h1{margin:0 0 16px;font-size:36px}h1 span{font-size:14px;color:#91a4c3;font-weight:400}.layout{display:flex;gap:22px;justify-content:center;align-items:flex-start}#game{width:min(300px,55vw);height:auto;border:1px solid #435371;border-radius:8px;box-shadow:0 15px 55px #0007}aside{width:200px}.card{background:#192337;border:1px solid #2d3d59;border-radius:10px;padding:14px;margin-bottom:12px}h2{font-size:13px;color:#a4b8d7;margin:0 0 10px;text-transform:uppercase;letter-spacing:1px}.stat{display:flex;justify-content:space-between;margin:6px 0}.stat b{color:#75ddff}button{border:0;border-radius:7px;background:#6ac9ef;color:#102136;font:600 14px system-ui;padding:10px 13px;cursor:pointer}button:hover{filter:brightness(1.15)}.buttons{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.help{font-size:12px;line-height:1.9;color:#aabbd4}#hold,#next{display:block;margin:auto;max-width:100%;height:auto}#status{min-height:24px;color:#a8dcff} .touch{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:12px}.touch button{min-width:44px;touch-action:manipulation}@media(max-width:480px){main{padding:12px}.layout{gap:10px}aside{width:145px}.card{padding:10px}h1{font-size:27px}.help{font-size:11px}}
+</style></head><body><main><h1>Tetris <span>Hvert kubbur telur</span></h1><div class="layout"><div><canvas id="game" width="300" height="600" aria-label="Tetris leikborð"></canvas><div class="touch"><button data-action="left">←</button><button data-action="rotate">↻</button><button data-action="right">→</button><button data-action="down">↓</button><button data-action="drop">Fella</button><button data-action="hold">Geyma</button></div></div><aside><div class="card"><h2>Leikurinn</h2><div class="stat">Stig <b id="score">0</b></div><div class="stat">Borð <b id="level">1</b></div><div class="stat">Línur <b id="lines">0</b></div><div class="stat">Hæstu stig <b id="best">0</b></div></div><div class="card"><h2>Næstu kubbar</h2><canvas id="next" width="140" height="170"></canvas></div><div class="card"><h2>Geymdur kubbur</h2><canvas id="hold" width="140" height="70"></canvas></div><div class="buttons"><button id="start">Byrja</button><button id="pause">Hlé</button><button id="restart">Nýr leikur</button></div><div id="status" role="status">Ýttu á Byrja</div><div class="help">← → Færa · ↓ Hraðara fall<br>↑ / X Snúa · Z Snúa til baka<br>Bilslá Fella · C Geyma<br>P / Esc Hlé · R Nýr leikur</div></aside></div></main>
+<script>
+'use strict';
+const $=id=>document.getElementById(id),ctx=$('game').getContext('2d');
+const forms={I:[[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0]],O:[[1,1],[1,1]],T:[[0,1,0],[1,1,1],[0,0,0]],S:[[0,1,1],[1,1,0],[0,0,0]],Z:[[1,1,0],[0,1,1],[0,0,0]],J:[[1,0,0],[1,1,1],[0,0,0]],L:[[0,0,1],[1,1,1],[0,0,0]]};
+const colors={I:'#63dcf4',O:'#f8d86b',T:'#b583f5',S:'#77e29e',Z:'#f3778c',J:'#7099f7',L:'#ffaf67'};
+let board,bag=[],queue=[],piece,held=null,holdUsed=false,score=0,lines=0,level=1,best=0,state='ready',lastTime=0,elapsed=0;
+try{best=Math.max(0,Number(localStorage.getItem('calbri-tetris-best'))||0)}catch{}
+function take(){if(!bag.length){bag=Object.keys(forms);for(let i=bag.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[bag[i],bag[j]]=[bag[j],bag[i]]}}return bag.pop()}
+function make(type){const m=forms[type].map(r=>r.slice());return{type,m,x:Math.floor((10-m.length)/2),y:0}}
+function collide(p,dx=0,dy=0,m=p.m){return m.some((row,y)=>row.some((v,x)=>v&&(p.x+x+dx<0||p.x+x+dx>=10||p.y+y+dy>=20||(p.y+y+dy>=0&&board[p.y+y+dy][p.x+x+dx]))))}
+function spawn(){piece=make(queue.shift());queue.push(take());holdUsed=false;elapsed=0;if(collide(piece))finish()}
+function update(){for(const [id,val]of Object.entries({score,level,lines,best}))$(id).textContent=val;$('status').textContent={ready:'Ýttu á Byrja',playing:'Góða skemmtun!',paused:'Í hléi',over:'Leik lokið — prófaðu aftur!'}[state];$('pause').textContent=state==='paused'?'Áfram':'Hlé'}
+function saveBest(){if(score>best){best=score;try{localStorage.setItem('calbri-tetris-best',String(best))}catch{}}}
+function finish(){state='over';saveBest();update()}
+function reset(){board=Array.from({length:20},()=>Array(10).fill(null));bag=[];queue=Array.from({length:3},take);held=null;score=lines=0;level=1;state='playing';spawn();update();draw()}
+function lock(){for(let y=0;y<piece.m.length;y++)for(let x=0;x<piece.m[y].length;x++)if(piece.m[y][x]){if(piece.y+y<0){finish();return}board[piece.y+y][piece.x+x]=piece.type}
+ let count=0;for(let y=19;y>=0;y--)if(board[y].every(Boolean)){board.splice(y,1);board.unshift(Array(10).fill(null));count++;y++}
+ score+=[0,100,300,500,800][count]*level;lines+=count;level=1+Math.floor(lines/10);saveBest();spawn();update()}
+function step(soft=false){if(!collide(piece,0,1)){piece.y++;if(soft)score++;}else lock();update()}
+function rotate(dir){if(piece.type==='O')return;const n=piece.m.length,m=Array.from({length:n},(_,y)=>Array.from({length:n},(_,x)=>dir>0?piece.m[n-1-x][y]:piece.m[x][n-1-y]));for(const dx of [0,-1,1,-2,2])if(!collide(piece,dx,0,m)){piece.x+=dx;piece.m=m;return}}
+function hold(){if(holdUsed)return;const type=piece.type;if(held){piece=make(held);held=type;if(collide(piece))finish()}else{held=type;spawn()}holdUsed=true;elapsed=0;update()}
+function pause(){if(state==='playing'){state='paused'}else if(state==='paused'){state='playing';elapsed=0}update();draw()}
+function action(a){if(a==='pause'){pause();return}if(state!=='playing')return;
+ if(a==='left'&&!collide(piece,-1))piece.x--;if(a==='right'&&!collide(piece,1))piece.x++;
+ if(a==='rotate')rotate(1);if(a==='reverse')rotate(-1);if(a==='down'){step(true);elapsed=0}
+ if(a==='drop'){while(!collide(piece,0,1)){piece.y++;score+=2}lock();elapsed=0}
+ if(a==='hold')hold();update();draw()}
+function block(c,x,y,size,color,alpha=1){c.globalAlpha=alpha;c.fillStyle=color;c.fillRect(x+1,y+1,size-2,size-2);c.fillStyle='#ffffff55';c.fillRect(x+3,y+3,size-6,3);c.globalAlpha=1}
+function paintPiece(p,alpha=1){p.m.forEach((r,y)=>r.forEach((v,x)=>{if(v&&p.y+y>=0)block(ctx,(p.x+x)*30,(p.y+y)*30,30,colors[p.type],alpha)}))}
+function mini(id,types){const c=$(id).getContext('2d');c.clearRect(0,0,$(id).width,$(id).height);types.forEach((t,i)=>{if(!t)return;const m=forms[t],s=18,ox=(140-m.length*s)/2,oy=i*55+5;m.forEach((r,y)=>r.forEach((v,x)=>{if(v)block(c,ox+x*s,oy+y*s,s,colors[t])}))})}
+function draw(){ctx.fillStyle='#151f32';ctx.fillRect(0,0,300,600);ctx.strokeStyle='#26344b';ctx.beginPath();for(let x=0;x<=10;x++){ctx.moveTo(x*30,0);ctx.lineTo(x*30,600)}for(let y=0;y<=20;y++){ctx.moveTo(0,y*30);ctx.lineTo(300,y*30)}ctx.stroke();
+ board.forEach((r,y)=>r.forEach((t,x)=>{if(t)block(ctx,x*30,y*30,30,colors[t])}));if(piece){const ghost={...piece};while(!collide(ghost,0,1))ghost.y++;paintPiece(ghost,.2);paintPiece(piece)}mini('next',queue);mini('hold',[held]);
+ if(state!=='playing'){ctx.fillStyle='#0c1327c9';ctx.fillRect(0,0,300,600);ctx.fillStyle='#edf3ff';ctx.font='bold 26px system-ui';ctx.textAlign='center';ctx.fillText({ready:'Tetris',paused:'Hlé',over:'Leik lokið'}[state],150,280);ctx.font='15px system-ui';ctx.fillText(state==='over'?'Nýr leikur: R':state==='paused'?'P til að halda áfram':'Ýttu á Byrja',150,315)}}
+function frame(time){const delta=Math.min(100,time-lastTime);lastTime=time;if(state==='playing'){elapsed+=delta;const interval=Math.max(80,850*Math.pow(.82,level-1));if(elapsed>=interval){elapsed=0;step()}draw()}requestAnimationFrame(frame)}
+const keys={ArrowLeft:'left',ArrowRight:'right',ArrowDown:'down',ArrowUp:'rotate',x:'rotate',z:'reverse',' ':'drop',c:'hold',p:'pause',Escape:'pause'};
+document.addEventListener('keydown',e=>{if(e.target instanceof HTMLElement&&['INPUT','TEXTAREA'].includes(e.target.tagName))return;const k=e.key.length===1?e.key.toLowerCase():e.key;if(keys[k]||k==='r'){e.preventDefault();if(e.repeat&&['rotate','reverse','drop','hold','pause'].includes(keys[k]))return;if(k==='r'){reset();return}action(keys[k])}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&state==='playing')pause()});
+$('start').onclick=()=>{if(state==='paused')pause();else if(state!=='playing')reset()};$('restart').onclick=reset;$('pause').onclick=pause;
+document.querySelectorAll('[data-action]').forEach(b=>b.onclick=()=>action(b.dataset.action));
+board=Array.from({length:20},()=>Array(10).fill(null));queue=Array.from({length:3},take);piece=make('T');update();draw();requestAnimationFrame(frame);
+</script></body></html>
